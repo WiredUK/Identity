@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Data.Entity;
 using Microsoft.Data.Entity.Infrastructure;
-using Microsoft.Data.Entity.Metadata;
 
 namespace Microsoft.AspNet.Identity.EntityFramework
 {
@@ -26,9 +25,31 @@ namespace Microsoft.AspNet.Identity.EntityFramework
     /// <typeparam name="TUser">The type of user objects.</typeparam>
     /// <typeparam name="TRole">The type of role objects.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for users and roles.</typeparam>
-    public class IdentityDbContext<TUser, TRole, TKey> : DbContext
+    public class IdentityDbContext<TUser, TRole, TKey> : IdentityDbContext<TUser, IdentityUserLogin<TKey>, TRole, IdentityRoleClaim<TKey>, IdentityUserRole<TKey>, IdentityUserClaim<TKey>, TKey>
         where TUser : IdentityUser<TKey>
         where TRole : IdentityRole<TKey>
+        where TKey : IEquatable<TKey>
+    {
+        
+    }
+
+    /// <summary>
+    /// Base class for the Entity Framework database context used for identity.
+    /// </summary>
+    /// <typeparam name="TUser">The type of user objects.</typeparam>
+    /// <typeparam name="TUserLogin">The type of user login objects.</typeparam>
+    /// <typeparam name="TRole">The type of role objects.</typeparam>
+    /// <typeparam name="TRoleClaim">The type of role claim objects.</typeparam>
+    /// <typeparam name="TUserRole">The type of user role objects.</typeparam>
+    /// <typeparam name="TUserClaim">The type of user user claim objects.</typeparam>
+    /// <typeparam name="TKey">The type of the primary key for users and roles.</typeparam>
+    public class IdentityDbContext<TUser, TUserLogin, TRole, TRoleClaim, TUserRole, TUserClaim, TKey> : DbContext
+        where TUser : IdentityUser<TKey>
+        where TUserLogin : IdentityUserLogin<TKey>
+        where TRole : IdentityRole<TKey>
+        where TRoleClaim : IdentityRoleClaim<TKey>
+        where TUserRole : IdentityUserRole<TKey>
+        where TUserClaim : IdentityUserClaim<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>
@@ -75,17 +96,17 @@ namespace Microsoft.AspNet.Identity.EntityFramework
         /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of User claims.
         /// </summary>
-        public DbSet<IdentityUserClaim<TKey>> UserClaims { get; set; }
+        public DbSet<TUserClaim> UserClaims { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of User logins.
         /// </summary>
-        public DbSet<IdentityUserLogin<TKey>> UserLogins { get; set; }
+        public DbSet<TUserLogin> UserLogins { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of User roles.
         /// </summary>
-        public DbSet<IdentityUserRole<TKey>> UserRoles { get; set; }
+        public DbSet<TUserRole> UserRoles { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of roles.
@@ -95,7 +116,7 @@ namespace Microsoft.AspNet.Identity.EntityFramework
         /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of role claims.
         /// </summary>
-        public DbSet<IdentityRoleClaim<TKey>> RoleClaims { get; set; }
+        public DbSet<TRoleClaim> RoleClaims { get; set; }
 
         /// <summary>
         /// Configures the schema needed for the identity framework.
